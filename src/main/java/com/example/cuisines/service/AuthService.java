@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private UserRepository userRepo;
     private PasswordEncoder passwordEncoder;
-    JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
     public String signup(SignupRequest request) {
         if (userRepo.findByEmail(request.getEmail()).isPresent()) {
@@ -25,7 +25,7 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepo.save(user);
-        return jwtUtil.generateToken(user.getEmail());
+        return jwtUtil.generateToken(user.getEmail(), user.getRole());
     }
 
     public String login(LoginRequest request) {
@@ -36,6 +36,6 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtUtil.generateToken(user.getEmail());
+        return jwtUtil.generateToken(user.getEmail(), user.getRole());
     }
 }
